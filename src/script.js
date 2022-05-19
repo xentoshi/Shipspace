@@ -14,8 +14,6 @@ const gui = new dat.GUI()
  * Loaders
  */
 const gltfLoader = new GLTFLoader()
-const textureLoader = new THREE.TextureLoader()
-const texture = textureLoader.load('/portfolio/static/textures/sand.jpg')
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -23,9 +21,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/**
- * Textures
- */
 
 /**
  * Floor
@@ -99,7 +94,6 @@ controls.enableDamping = true
 gltfLoader.load(
     '/models/coconut_palm/scene.gltf',
     (gltf) => {
-        // scene.add(gltf.scene.children[0])
         gltf.scene.scale.set(8, 8, 8)
         scene.add(gltf.scene)
     }
