@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { gsap } from 'gsap'
 
 /**
  * Base
@@ -13,7 +14,28 @@ const gui = new dat.GUI()
 /**
  * Loaders
  */
-const gltfLoader = new GLTFLoader()
+const loadingBarElement = document.querySelector('.loading-bar')
+const loadingManager = new THREE.LoadingManager(
+    // Loaded
+    () => 
+    {
+        window.setTimeout(() => 
+        {
+            gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0, delay: 1 })
+
+            loadingBarElement.classList.add('ended')
+            loadingBarElement.style.transform = ''
+        }, 500)   
+    },
+
+    // Progress
+    (itemUrl, itemsLoaded, itemsTotal) => 
+    {
+        const progressRatio = itemsLoaded / itemsTotal
+        loadingBarElement.style.transform = `scaleX(${progressRatio}`
+    }
+)
+const gltfLoader = new GLTFLoader(loadingManager)
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -21,13 +43,12 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-
 /**
  * Floor
  */
 const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(5, 32),
-    new THREE.MeshBasicMaterial({ color: 0xfffff })
+    new THREE.CircleGeometry(2.5, 16),
+    new THREE.MeshBasicMaterial({ color: 0xffffff })
 )
 floor.receiveShadow = true
 floor.rotation.x = - Math.PI * 0.5
@@ -59,6 +80,35 @@ const sizes = {
     height: window.innerHeight
 }
 
+/**
+ * Overlay
+ */
+ const overlayGeometry = new THREE.PlaneGeometry(2, 2, 1, 1)
+ const overlayMaterial = new THREE.ShaderMaterial({ 
+     transparent: true,
+     uniforms: 
+     {
+         uAlpha: { value: 1 }
+     },
+     vertexShader: `
+     void main()
+     {
+         gl_Position = vec4(position, 1.0);
+     }
+     `,
+     fragmentShader: `
+     uniform float uAlpha;
+
+     void main() 
+     {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
+     }
+     `
+    })
+ const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial)
+ scene.add(overlay)
+
+
 window.addEventListener('resize', () =>
 {
     // Update sizes
@@ -79,7 +129,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(10, 8, 10)
+camera.position.set(5, 8, 8)
 scene.add(camera)
 
 // Controls
@@ -94,7 +144,8 @@ controls.enableDamping = true
 gltfLoader.load(
     '/models/coconut_palm/scene.gltf',
     (gltf) => {
-        gltf.scene.scale.set(8, 8, 8)
+        // scene.add(gltf.scene.children[0])
+        gltf.scene.scale.set(5, 5, 5)
         scene.add(gltf.scene)
     }
 )
