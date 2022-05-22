@@ -54,7 +54,18 @@ floor.receiveShadow = true
 floor.rotation.x = - Math.PI * 0.5
 scene.add(floor)
 
+/**
+ * Water
+ */
+// Geometry 
+const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
 
+// Material
+const waterMaterial = new THREE.MeshBasicMaterial()
+
+// Mesh 
+const water = new THREE.Mesh(waterGeometry, waterMaterial)
+water.rotation.x = - Math.PI * 0.5
 /**
  * Lights
  */
