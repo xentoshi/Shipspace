@@ -4,7 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { gsap } from 'gsap'
-
+import waterVertexShader from './shaders/water/vertex.glsl'
+import waterFragmentShader from './shaders/water/fragment.glsl'
 /**
  * Base
  */
@@ -47,8 +48,8 @@ const scene = new THREE.Scene()
  * Floor
  */
 const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(2.5, 16),
-    new THREE.MeshBasicMaterial({ color: 0xffffff })
+    new THREE.CircleGeometry(4, 16),
+    new THREE.MeshBasicMaterial({ color: 0xba9a88 })
 )
 floor.receiveShadow = true
 floor.rotation.x = - Math.PI * 0.5
@@ -58,14 +59,24 @@ scene.add(floor)
  * Water
  */
 // Geometry 
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
+const waterGeometry = new THREE.PlaneGeometry(60, 60, 128, 128)
 
 // Material
-const waterMaterial = new THREE.MeshBasicMaterial()
+const waterMaterial = new THREE.ShaderMaterial({
+    vertexShader: waterVertexShader,
+    fragmentShader: waterFragmentShader,
+    uniforms:
+    {
+        uBigWavesElevation: { value: 0.2 }
+    }
+})
 
 // Mesh 
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
+scene.add(water)
+
 water.rotation.x = - Math.PI * 0.5
+water.position.y = - 1
 /**
  * Lights
  */
@@ -160,6 +171,11 @@ gltfLoader.load(
         scene.add(gltf.scene)
     }
 )
+
+// GUI 
+gui.add(waterMaterial.uniforms.uBigWavesElevation, 
+    'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
+    
 /**
  * Renderer
  */
