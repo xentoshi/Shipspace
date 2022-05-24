@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { gsap } from 'gsap'
 import waterVertexShader from './shaders/water/vertex.glsl'
 import waterFragmentShader from './shaders/water/fragment.glsl'
+import { generateUUID } from 'three/src/math/MathUtils'
 /**
  * Base
  */
@@ -59,7 +60,7 @@ scene.add(floor)
  * Water
  */
 // Geometry 
-const waterGeometry = new THREE.PlaneGeometry(60, 60, 128, 128)
+const waterGeometry = new THREE.PlaneGeometry(30, 30, 128, 128)
 
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
@@ -67,9 +68,12 @@ const waterMaterial = new THREE.ShaderMaterial({
     fragmentShader: waterFragmentShader,
     uniforms:
     {
-        uBigWavesElevation: { value: 0.2 }
+        uBigWavesElevation: { value: 0.2 },
+        uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) }
     }
 })
+
+// **** Frequency ****
 
 // Mesh 
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
@@ -175,8 +179,14 @@ gltfLoader.load(
 // GUI 
 gui.add(waterMaterial.uniforms.uBigWavesElevation, 
     'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
-    
-/**
+    gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
+        'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
+    gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
+        'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
+
+
+
+    /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
