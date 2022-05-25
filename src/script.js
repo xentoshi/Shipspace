@@ -12,6 +12,7 @@ import { generateUUID } from 'three/src/math/MathUtils'
  */
 // Debug
 const gui = new dat.GUI()
+const debugObject = {}
 
 /**
  * Loaders
@@ -62,6 +63,14 @@ scene.add(floor)
 // Geometry 
 const waterGeometry = new THREE.PlaneGeometry(30, 30, 128, 128)
 
+// Colors
+debugObject.depthColor = '#186691'
+debugObject.surfaceColor = '9bd8ff'
+
+// Add Color to Debug UI
+gui.addColor(debugObject, 'depthColor').onChange(() => { waterMaterial.uniforms.uDepthColor.value.set(debugObject.depthColor) })
+gui.addColor(debugObject, 'surfaceColor').onChange(() => { waterMaterial.uniforms.uSurfaceColor.value.set(debugObject.surfaceColor) })
+
 // Material
 const waterMaterial = new THREE.ShaderMaterial({
     vertexShader: waterVertexShader,
@@ -71,11 +80,25 @@ const waterMaterial = new THREE.ShaderMaterial({
         uTime: { value: 0 },
         uBigWavesElevation: { value: 0.2 },
         uBigWavesFrequency: { value: new THREE.Vector2(4, 1.5) },
-        uBigWavesSpeed: { value: 0.75 }
+        uBigWavesSpeed: { value: 0.75 },
+        uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
+        uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
+        uColorOffset: { value: 0.08 },
+        uColorMultiplier: { value: 1 },
     }
 })
 
-// **** Frequency ****
+// GUI 
+gui.add(waterMaterial.uniforms.uBigWavesElevation, 
+    'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
+        'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
+gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
+        'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
+gui.add(waterMaterial.uniforms.uBigWavesSpeed, 
+    'value').min(0).max(10).step(0.001).name('uBigWavesSpeed')
+gui.add(waterMaterial.uniforms.uColorOffset, 'value').min(0).max(1).step(0.001).name('uColorOffset')
+gui.add(waterMaterial.uniforms.uColorMultiplier, 'value').min(0).max(10).step(0.001).name('uColorMultiplier')
 
 // Mesh 
 const water = new THREE.Mesh(waterGeometry, waterMaterial)
@@ -177,15 +200,6 @@ gltfLoader.load(
         scene.add(gltf.scene)
     }
 )
-
-// GUI 
-gui.add(waterMaterial.uniforms.uBigWavesElevation, 
-    'value').min(0).max(1).step(0.001).name('uBigWavesElevation')
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
-        'x').min(0).max(10).step(0.001).name('uBigWavesFrequencyX')
-gui.add(waterMaterial.uniforms.uBigWavesFrequency.value, 
-        'y').min(0).max(10).step(0.001).name('uBigWavesFrequencyY')
-gui.add(waterMaterial.uniforms.uBigWavesSpeed, 'value').min(0).max(10).step(0.001).name('uBigWavesSpeed')
 
 
 
