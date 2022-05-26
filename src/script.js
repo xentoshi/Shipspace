@@ -61,7 +61,7 @@ scene.add(floor)
  * Water
  */
 // Geometry 
-const waterGeometry = new THREE.PlaneGeometry(30, 30, 128, 128)
+const waterGeometry = new THREE.PlaneGeometry(30, 30, 512, 512)
 
 // Colors
 debugObject.depthColor = '#186691'
@@ -85,6 +85,7 @@ const waterMaterial = new THREE.ShaderMaterial({
         uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
         uColorOffset: { value: 0.08 },
         uColorMultiplier: { value: 1 },
+        
     }
 })
 
