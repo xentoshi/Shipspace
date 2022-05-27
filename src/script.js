@@ -12,7 +12,7 @@ import { WebGLRenderTarget } from 'three'
  * Base
  */
 // Debug
-const gui = new dat.GUI()
+const gui = new dat.GUI({ closed: true })
 const debugObject = {}
 
 /**
