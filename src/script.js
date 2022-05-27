@@ -7,6 +7,7 @@ import { gsap } from 'gsap'
 import waterVertexShader from './shaders/water/vertex.glsl'
 import waterFragmentShader from './shaders/water/fragment.glsl'
 import { generateUUID } from 'three/src/math/MathUtils'
+import { WebGLRenderTarget } from 'three'
 /**
  * Base
  */
@@ -47,21 +48,10 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Floor
- */
-const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(4, 16),
-    new THREE.MeshBasicMaterial({ color: 0xba9a88 })
-)
-floor.receiveShadow = true
-floor.rotation.x = - Math.PI * 0.5
-scene.add(floor)
-
-/**
  * Water
  */
 // Geometry 
-const waterGeometry = new THREE.PlaneGeometry(30, 30, 512, 512)
+const waterGeometry = new THREE.PlaneGeometry(5, 5, 512, 512)
 
 // Colors
 debugObject.depthColor = '#186691'
@@ -119,7 +109,14 @@ const water = new THREE.Mesh(waterGeometry, waterMaterial)
 scene.add(water)
 
 water.rotation.x = - Math.PI * 0.5
-water.position.y = - 1
+water.position.y = 0.4
+
+/**
+ * Fog
+ */
+const fog = new THREE.Fog('#262837', 1, 15)
+scene.fog = fog
+
 /**
  * Lights
  */
@@ -194,7 +191,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(5, 8, 8)
+camera.position.set(2, 0.5, 2)
 scene.add(camera)
 
 // Controls
@@ -205,19 +202,23 @@ controls.enableDamping = true
 /**
  * Models
  */
+let mixer = null
+ gltfLoader.load(
+    '/models/tz_pirate_ship/scene.gltf',
+    (gltf) =>
+    {
 
-gltfLoader.load(
-    '/models/coconut_palm/scene.gltf',
-    (gltf) => {
-        // scene.add(gltf.scene.children[0])
-        gltf.scene.scale.set(5, 5, 5)
+        gltf.scene.scale.set(0.001, 0.001, 0.001)
+        gltf.scene.position.set(1, 0.5, 1)
         scene.add(gltf.scene)
+
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[0])
+        action.play()
     }
 )
 
-
-
-    /**
+/**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
@@ -227,7 +228,7 @@ renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
+renderer.setClearColor('#262837')
 /**
  * Animate
  */
@@ -245,6 +246,11 @@ const tick = () =>
 
     // Update controls
     controls.update()
+
+    if(mixer)
+    {
+        mixer.update(deltaTime)
+    }
 
     // Render
     renderer.render(scene, camera)
