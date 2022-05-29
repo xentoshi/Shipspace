@@ -114,7 +114,7 @@ water.position.y = 0.4
 /**
  * Fog
  */
-const fog = new THREE.Fog('#262837', 1, 15)
+const fog = new THREE.Fog('#262837', 1, 10)
 scene.fog = fog
 
 /**

@@ -36,3 +36,15 @@ body
     transform-origin: 100% 0;
     transition: transform 1.5s ease-in-out;
 }
+
+#info {
+	position: absolute;
+	top: 150px;
+	width: 100%;
+	text-align: center;
+	z-index: 100;
+	display:block;
+    color: white;
+    font-family: sans-serif;
+    font-size: 24px;
+}
