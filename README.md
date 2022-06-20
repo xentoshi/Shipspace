@@ -3,7 +3,9 @@
 
 🏄 🌊 I'm building Hawaii!!! 
 
-This would not be possible without # [Three.js Journey](https://threejs-journey.com/)
+Water shader example is from # [Three.js Journey](https://threejs-journey.com/) lesson, and Ship model imported from [sketchfab](https://skfb.ly/6VYES)
+
+
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
