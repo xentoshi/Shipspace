@@ -1,7 +1,7 @@
-# Hawaii
+# Shipspace
 
 
-🏄 🌊 I'm building Hawaii!!! 
+🏄 🌊 For real pirates!!! 
 
 Water shader example is from # [Three.js Journey](https://threejs-journey.com/) lesson, and Ship model imported from [sketchfab](https://skfb.ly/6VYES)
 
